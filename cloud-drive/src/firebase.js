@@ -1,19 +1,32 @@
 import firebase from "firebase/app"
 import "firebase/auth"
+import "firebase/firestore"
+import "firebase/storage"
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
     authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
     projectId: process.env.REACT_APP_FIREBASE_PROJECTID,
     storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+    databaseURL : process.env.REACT_APP_FIREBASE_DATABASEURL,
     messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGE_SENDERID,
     appId: process.env.REACT_APP_FIREBASE_APPID
 }
 
 
 const app = firebase.initializeApp(firebaseConfig)
-
-export const auth = app.auth()
+const firestore = app.firestore()
+const dbConfig = {
+    folders: firestore.collection("folders"),
+    files: firestore.collection("files"),
+    formatDoc: doc => {
+        return { id: doc.id, ...doc.data() }
+    },
+    getCurrentTimestamp: firebase.firestore.FieldValue.serverTimestamp, 
+} 
+export const auth = app.auth() 
+export const storage = app.storage()
+export const database = dbConfig 
 export default app
 
 
